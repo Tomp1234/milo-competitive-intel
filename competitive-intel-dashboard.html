@@ -1,0 +1,1742 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Milo Competitive Intelligence</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<script src="https://unpkg.com/lucide@latest"></script>
+<style>
+/* ============================================
+   MILO COMPETITIVE INTELLIGENCE DASHBOARD
+   Internal GTM tool — quick scanning, staying current
+   ============================================ */
+
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+:root {
+  --bg-primary: #0a0a14;
+  --bg-secondary: #12121f;
+  --bg-card: #181828;
+  --bg-card-hover: #1e1e32;
+  --bg-surface: #222238;
+  --border-subtle: rgba(124, 58, 237, 0.15);
+  --border-card: rgba(255, 255, 255, 0.06);
+  --purple-primary: #7c3aed;
+  --purple-light: #a78bfa;
+  --purple-glow: rgba(124, 58, 237, 0.3);
+  --purple-subtle: rgba(124, 58, 237, 0.08);
+  --text-primary: #f0f0f5;
+  --text-secondary: #9495a7;
+  --text-muted: #5f6078;
+  --green: #22c55e;
+  --green-bg: rgba(34, 197, 94, 0.12);
+  --amber: #f59e0b;
+  --amber-bg: rgba(245, 158, 11, 0.12);
+  --red: #ef4444;
+  --red-bg: rgba(239, 68, 68, 0.12);
+  --blue: #3b82f6;
+  --blue-bg: rgba(59, 130, 246, 0.12);
+  --cyan: #06b6d4;
+  --cyan-bg: rgba(6, 182, 212, 0.12);
+  --gray: #6b7280;
+  --gray-bg: rgba(107, 114, 128, 0.12);
+}
+
+body {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  background: var(--bg-primary);
+  color: var(--text-primary);
+  line-height: 1.5;
+  min-height: 100vh;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Scrollbar */
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--bg-surface); border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: var(--purple-primary); }
+
+/* Layout */
+.dashboard {
+  max-width: 1440px;
+  margin: 0 auto;
+  padding: 32px 40px 80px;
+}
+
+/* ===== HEADER ===== */
+.header {
+  margin-bottom: 32px;
+}
+
+.header-top {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  margin-bottom: 24px;
+}
+
+.header-title {
+  font-size: 28px;
+  font-weight: 700;
+  letter-spacing: -0.5px;
+  color: var(--text-primary);
+}
+
+.header-title span {
+  color: var(--purple-primary);
+}
+
+.header-subtitle {
+  font-size: 14px;
+  color: var(--text-secondary);
+  margin-top: 4px;
+  font-weight: 400;
+}
+
+.header-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 14px;
+  background: var(--purple-subtle);
+  border: 1px solid var(--border-subtle);
+  border-radius: 20px;
+  font-size: 12px;
+  color: var(--purple-light);
+  font-weight: 500;
+}
+
+.stats-bar {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 16px;
+}
+
+.stat-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border-card);
+  border-radius: 12px;
+  padding: 20px;
+  transition: border-color 0.2s;
+}
+
+.stat-card:hover {
+  border-color: var(--border-subtle);
+}
+
+.stat-label {
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+  color: var(--text-muted);
+  margin-bottom: 8px;
+}
+
+.stat-value {
+  font-size: 28px;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.stat-value .stat-unit {
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--text-secondary);
+  margin-left: 4px;
+}
+
+/* ===== TWO COLUMN LAYOUT: Intel Feed + ICP Overlap ===== */
+.primary-sections {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px;
+  margin-bottom: 32px;
+}
+
+/* ===== SECTION HEADERS ===== */
+.section-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 20px;
+}
+
+.section-title {
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--text-primary);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.section-title i {
+  color: var(--purple-primary);
+  width: 20px;
+  height: 20px;
+}
+
+.section-badge {
+  font-size: 10px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+  padding: 4px 10px;
+  border-radius: 10px;
+  background: var(--purple-subtle);
+  color: var(--purple-light);
+}
+
+/* ===== INTEL FEED ===== */
+.intel-feed-container {
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-card);
+  border-radius: 16px;
+  padding: 24px;
+}
+
+.feed-filters {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 20px;
+  flex-wrap: wrap;
+}
+
+.feed-filter {
+  padding: 6px 14px;
+  border-radius: 8px;
+  font-size: 12px;
+  font-weight: 500;
+  border: 1px solid var(--border-card);
+  background: transparent;
+  color: var(--text-secondary);
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.feed-filter:hover {
+  border-color: var(--border-subtle);
+  color: var(--text-primary);
+}
+
+.feed-filter.active {
+  background: var(--purple-primary);
+  border-color: var(--purple-primary);
+  color: white;
+}
+
+.feed-list {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.feed-item {
+  display: flex;
+  gap: 14px;
+  padding: 14px 16px;
+  border-radius: 10px;
+  transition: background 0.2s;
+  align-items: flex-start;
+}
+
+.feed-item:hover {
+  background: var(--bg-card);
+}
+
+.feed-date {
+  font-size: 11px;
+  font-weight: 500;
+  color: var(--text-muted);
+  min-width: 80px;
+  padding-top: 2px;
+  white-space: nowrap;
+}
+
+.feed-content {
+  flex: 1;
+}
+
+.feed-company {
+  font-weight: 600;
+  font-size: 13px;
+  margin-bottom: 3px;
+}
+
+.feed-detail {
+  font-size: 13px;
+  color: var(--text-secondary);
+  line-height: 1.45;
+}
+
+.event-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 3px 10px;
+  border-radius: 6px;
+  font-size: 10px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+
+.event-badge.funding {
+  background: var(--green-bg);
+  color: var(--green);
+}
+
+.event-badge.acquisition {
+  background: var(--blue-bg);
+  color: var(--blue);
+}
+
+.event-badge.launch {
+  background: var(--cyan-bg);
+  color: var(--cyan);
+}
+
+.event-badge.decline {
+  background: var(--red-bg);
+  color: var(--red);
+}
+
+.feed-empty {
+  padding: 24px;
+  text-align: center;
+  color: var(--text-muted);
+  font-size: 13px;
+  font-style: italic;
+}
+
+/* ===== ICP OVERLAP ===== */
+.icp-container {
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-card);
+  border-radius: 16px;
+  padding: 24px;
+}
+
+.icp-subtitle {
+  font-size: 12px;
+  color: var(--text-muted);
+  margin-bottom: 20px;
+  line-height: 1.5;
+}
+
+.icp-list {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.icp-item {
+  padding: 14px 16px;
+  border-radius: 10px;
+  background: var(--bg-card);
+  border: 1px solid var(--border-card);
+  transition: border-color 0.2s;
+}
+
+.icp-item:hover {
+  border-color: var(--border-subtle);
+}
+
+.icp-item.acquired {
+  opacity: 0.5;
+}
+
+.icp-item-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 10px;
+}
+
+.icp-item-name {
+  font-weight: 600;
+  font-size: 14px;
+}
+
+.icp-score-badge {
+  font-size: 11px;
+  font-weight: 600;
+  padding: 3px 10px;
+  border-radius: 6px;
+}
+
+.icp-score-badge.high {
+  background: var(--red-bg);
+  color: var(--red);
+}
+
+.icp-score-badge.medium {
+  background: var(--amber-bg);
+  color: var(--amber);
+}
+
+.icp-score-badge.low {
+  background: var(--green-bg);
+  color: var(--green);
+}
+
+.icp-bar-track {
+  height: 6px;
+  background: var(--bg-surface);
+  border-radius: 3px;
+  overflow: hidden;
+  margin-bottom: 8px;
+}
+
+.icp-bar-fill {
+  height: 100%;
+  border-radius: 3px;
+  transition: width 0.6s ease;
+}
+
+.icp-bar-fill.high {
+  width: 85%;
+  background: linear-gradient(90deg, var(--red), #f87171);
+}
+
+.icp-bar-fill.medium {
+  width: 50%;
+  background: linear-gradient(90deg, var(--amber), #fbbf24);
+}
+
+.icp-bar-fill.low {
+  width: 20%;
+  background: linear-gradient(90deg, var(--green), #4ade80);
+}
+
+.icp-rationale {
+  font-size: 12px;
+  color: var(--text-secondary);
+  line-height: 1.45;
+}
+
+/* ===== MARKET MAP ===== */
+.market-map-section {
+  margin-bottom: 32px;
+}
+
+.market-map-wrapper {
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-card);
+  border-radius: 16px;
+  padding: 24px;
+}
+
+.market-map {
+  position: relative;
+  width: 100%;
+  height: 400px;
+  background: var(--bg-card);
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+/* Grid lines */
+.map-grid {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+.map-grid-line-h, .map-grid-line-v {
+  position: absolute;
+  background: rgba(255, 255, 255, 0.03);
+}
+
+.map-grid-line-h {
+  width: 100%;
+  height: 1px;
+  left: 0;
+  top: 50%;
+}
+
+.map-grid-line-v {
+  height: 100%;
+  width: 1px;
+  top: 0;
+  left: 50%;
+}
+
+/* Axis labels */
+.map-axis-label {
+  position: absolute;
+  font-size: 10px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  color: var(--text-muted);
+  pointer-events: none;
+}
+
+.map-axis-label.left { left: 20px; top: 50%; transform: translateY(-50%); }
+.map-axis-label.right { right: 20px; top: 50%; transform: translateY(-50%); }
+.map-axis-label.top { top: 12px; left: 50%; transform: translateX(-50%); }
+.map-axis-label.bottom { bottom: 12px; left: 50%; transform: translateX(-50%); }
+
+/* Quadrant labels */
+.map-quadrant-label {
+  position: absolute;
+  font-size: 10px;
+  font-weight: 500;
+  color: rgba(255, 255, 255, 0.06);
+  pointer-events: none;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+/* Dots */
+.map-dot {
+  position: absolute;
+  transform: translate(-50%, -50%);
+  cursor: pointer;
+  z-index: 2;
+  transition: transform 0.2s, z-index 0s;
+}
+
+.map-dot:hover {
+  transform: translate(-50%, -50%) scale(1.15);
+  z-index: 10;
+}
+
+.map-dot-circle {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  font-weight: 700;
+  border: 2px solid rgba(255, 255, 255, 0.1);
+  position: relative;
+}
+
+.map-dot.milo .map-dot-circle {
+  width: 44px;
+  height: 44px;
+  background: linear-gradient(135deg, #7c3aed, #a78bfa);
+  border: 2px solid var(--purple-light);
+  font-size: 13px;
+  box-shadow: 0 0 20px var(--purple-glow), 0 0 40px rgba(124, 58, 237, 0.15);
+}
+
+.map-dot-label {
+  position: absolute;
+  top: calc(100% + 6px);
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 10px;
+  font-weight: 600;
+  color: var(--text-secondary);
+  white-space: nowrap;
+  pointer-events: none;
+}
+
+.map-dot.milo .map-dot-label {
+  color: var(--purple-light);
+  font-size: 11px;
+}
+
+/* Map tooltip */
+.map-tooltip {
+  position: absolute;
+  background: var(--bg-card);
+  border: 1px solid var(--border-subtle);
+  border-radius: 10px;
+  padding: 12px 16px;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.15s;
+  z-index: 100;
+  max-width: 260px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+}
+
+.map-tooltip.visible {
+  opacity: 1;
+}
+
+.map-tooltip-name {
+  font-weight: 700;
+  font-size: 13px;
+  margin-bottom: 4px;
+}
+
+.map-tooltip-desc {
+  font-size: 11px;
+  color: var(--text-secondary);
+  line-height: 1.4;
+}
+
+/* ===== MARKET NARRATIVE ===== */
+.market-narrative {
+  margin-top: 20px;
+  padding: 20px 24px;
+  background: var(--bg-card);
+  border: 1px solid var(--border-card);
+  border-radius: 12px;
+  border-left: 3px solid var(--purple-primary);
+}
+
+.narrative-label {
+  font-size: 10px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  color: var(--purple-light);
+  margin-bottom: 8px;
+}
+
+.narrative-text {
+  font-size: 14px;
+  color: var(--text-secondary);
+  line-height: 1.65;
+  font-style: italic;
+}
+
+.narrative-text[contenteditable="true"]:focus {
+  outline: none;
+  color: var(--text-primary);
+}
+
+/* ===== COMPETITOR CARDS ===== */
+.cards-section {
+  margin-bottom: 32px;
+}
+
+.cards-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 16px;
+}
+
+.competitor-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border-card);
+  border-radius: 14px;
+  padding: 22px;
+  cursor: pointer;
+  transition: all 0.25s;
+  position: relative;
+  overflow: hidden;
+}
+
+.competitor-card:hover {
+  border-color: var(--border-subtle);
+  background: var(--bg-card-hover);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+}
+
+.competitor-card.acquired {
+  opacity: 0.55;
+}
+
+.competitor-card.acquired::after {
+  content: 'ACQUIRED';
+  position: absolute;
+  top: 14px;
+  right: -28px;
+  background: var(--gray);
+  color: white;
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 1px;
+  padding: 3px 32px;
+  transform: rotate(45deg);
+}
+
+.competitor-card.shutdown {
+  opacity: 0.55;
+}
+
+.competitor-card.shutdown::after {
+  content: 'SHUTDOWN';
+  position: absolute;
+  top: 14px;
+  right: -28px;
+  background: var(--red);
+  color: white;
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 1px;
+  padding: 3px 32px;
+  transform: rotate(45deg);
+}
+
+.card-header {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-bottom: 14px;
+}
+
+.card-avatar {
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 16px;
+  color: white;
+  flex-shrink: 0;
+}
+
+.card-name {
+  font-size: 16px;
+  font-weight: 700;
+}
+
+.card-name a {
+  color: var(--text-primary);
+  text-decoration: none;
+  transition: color 0.2s;
+}
+
+.card-name a:hover {
+  color: var(--purple-light);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.card-meta {
+  font-size: 11px;
+  color: var(--text-muted);
+  margin-top: 2px;
+}
+
+.card-description {
+  font-size: 13px;
+  color: var(--text-secondary);
+  line-height: 1.5;
+  margin-bottom: 16px;
+}
+
+.card-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 16px;
+}
+
+.card-tag {
+  padding: 4px 10px;
+  border-radius: 6px;
+  font-size: 11px;
+  font-weight: 500;
+}
+
+.card-tag.segment {
+  background: var(--purple-subtle);
+  color: var(--purple-light);
+}
+
+.card-tag.threat-high {
+  background: var(--red-bg);
+  color: var(--red);
+}
+
+.card-tag.threat-medium {
+  background: var(--amber-bg);
+  color: var(--amber);
+}
+
+.card-tag.threat-low {
+  background: var(--green-bg);
+  color: var(--green);
+}
+
+.card-tag.threat-none {
+  background: var(--gray-bg);
+  color: var(--gray);
+}
+
+.card-tag.overlap-high {
+  background: var(--red-bg);
+  color: var(--red);
+}
+
+.card-tag.overlap-medium {
+  background: var(--amber-bg);
+  color: var(--amber);
+}
+
+.card-tag.overlap-low {
+  background: var(--green-bg);
+  color: var(--green);
+}
+
+.card-customers {
+  font-size: 11px;
+  color: var(--text-muted);
+}
+
+.card-customers span {
+  color: var(--text-secondary);
+}
+
+.card-expand-hint {
+  font-size: 11px;
+  color: var(--text-muted);
+  margin-top: 14px;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  opacity: 0;
+  transition: opacity 0.2s;
+}
+
+.competitor-card:hover .card-expand-hint {
+  opacity: 1;
+}
+
+/* ===== MODAL ===== */
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.7);
+  backdrop-filter: blur(4px);
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.25s;
+}
+
+.modal-overlay.active {
+  opacity: 1;
+  pointer-events: all;
+}
+
+.modal {
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-card);
+  border-radius: 20px;
+  width: 90%;
+  max-width: 640px;
+  max-height: 80vh;
+  overflow-y: auto;
+  padding: 32px;
+  transform: translateY(20px) scale(0.97);
+  transition: transform 0.25s;
+  box-shadow: 0 24px 64px rgba(0, 0, 0, 0.5);
+}
+
+.modal-overlay.active .modal {
+  transform: translateY(0) scale(1);
+}
+
+.modal-close {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  background: var(--bg-surface);
+  border: none;
+  color: var(--text-secondary);
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.2s;
+}
+
+.modal-close:hover {
+  background: var(--purple-primary);
+  color: white;
+}
+
+.modal-header {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 24px;
+  position: relative;
+}
+
+.modal-avatar {
+  width: 52px;
+  height: 52px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 20px;
+  color: white;
+  flex-shrink: 0;
+}
+
+.modal-name {
+  font-size: 22px;
+  font-weight: 700;
+}
+
+.modal-meta {
+  font-size: 13px;
+  color: var(--text-secondary);
+  margin-top: 2px;
+}
+
+.modal-section {
+  margin-bottom: 22px;
+}
+
+.modal-section-title {
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+  color: var(--text-muted);
+  margin-bottom: 8px;
+}
+
+.modal-section p {
+  font-size: 14px;
+  color: var(--text-secondary);
+  line-height: 1.6;
+}
+
+.modal-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.modal-customers-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.modal-customer {
+  padding: 4px 12px;
+  background: var(--bg-surface);
+  border-radius: 6px;
+  font-size: 12px;
+  color: var(--text-secondary);
+}
+
+.modal-events {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.modal-event {
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+  padding: 10px 14px;
+  background: var(--bg-card);
+  border-radius: 8px;
+}
+
+.modal-event-date {
+  font-size: 11px;
+  color: var(--text-muted);
+  min-width: 72px;
+  padding-top: 1px;
+}
+
+.modal-event-detail {
+  font-size: 13px;
+  color: var(--text-secondary);
+  line-height: 1.4;
+}
+
+.modal-no-data {
+  font-size: 13px;
+  color: var(--text-muted);
+  font-style: italic;
+}
+
+/* ===== RESPONSIVE ===== */
+@media (max-width: 1024px) {
+  .primary-sections {
+    grid-template-columns: 1fr;
+  }
+  .stats-bar {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 768px) {
+  .dashboard {
+    padding: 20px 16px 60px;
+  }
+  .stats-bar {
+    grid-template-columns: 1fr 1fr;
+  }
+  .cards-grid {
+    grid-template-columns: 1fr;
+  }
+  .header-top {
+    flex-direction: column;
+    gap: 12px;
+  }
+  .market-map {
+    height: 320px;
+  }
+}
+</style>
+</head>
+<body>
+
+<script>
+// ============================================================
+// UPDATE DATA OBJECT BELOW TO REFRESH INTEL
+// ============================================================
+
+const competitors = [
+  {
+    id: "wisdomai",
+    name: "WisdomAI",
+    website: "https://www.wisdom.ai/",
+    founded: 2023,
+    hq: "San Mateo, CA",
+    funding: "$73M",
+    fundingStage: "Series A",
+    description: "AI data analyst for enterprise. Answers questions from structured and unstructured data. Built by Rubrik co-founder.",
+    targetSegment: "Enterprise",
+    targetMarket: "enterprise",
+    fundingLevel: "high",
+    icpOverlap: "Low",
+    icpRationale: "Fortune 500 focus — Cisco, ConocoPhillips, Patreon. Too large for Milo's 100-500 employee sweet spot. Different buyer (data teams, not COOs).",
+    knownCustomerTypes: "Technology, Healthcare, Financial Services, Energy, Manufacturing",
+    knownCustomers: ["Descope", "ConocoPhillips", "Cisco", "Patreon"],
+    threatLevel: "Medium",
+    threatRationale: "Well-funded but enterprise-only. Will move downstream eventually.",
+    events: [
+      { date: "2025-11-12", type: "Funding", detail: "Raised $50M Series A led by Kleiner Perkins + Nvidia (NVentures). Total raised: $73M." },
+      { date: "2024-05-01", type: "Funding", detail: "Raised $23M seed led by Coatue. Launched from stealth." }
+    ]
+  },
+  {
+    id: "julius",
+    name: "Julius AI",
+    website: "https://julius.ai/",
+    founded: 2023,
+    hq: "New York, NY",
+    funding: "$10M",
+    fundingStage: "Seed",
+    description: "Conversational data analysis tool. Connects to databases, lets non-technical users run analyses in natural language. 2M+ users.",
+    targetSegment: "SMB / Mid-Market",
+    targetMarket: "midmarket",
+    fundingLevel: "low",
+    icpOverlap: "Medium",
+    icpRationale: "Targets non-technical users at mid-sized companies — overlap with Milo's buyer. But more data science tool than BI. Customers skew towards analysts and students, not COOs.",
+    knownCustomerTypes: "Education, Tech, General Business",
+    knownCustomers: ["Harvard Business School", "Various mid-market companies"],
+    threatLevel: "Medium",
+    threatRationale: "YC + Bessemer backed. Large user base (2M) but different use case — more data exploration than business BI.",
+    events: [
+      { date: "2025-07-29", type: "Funding", detail: "Raised $10M seed from Bessemer Venture Partners, Y Combinator, Horizon VC." }
+    ]
+  },
+  {
+    id: "zenlytic",
+    name: "Zenlytic",
+    website: "https://www.zenlytic.com/",
+    founded: 2018,
+    hq: "New York, NY",
+    funding: "$15.4M",
+    fundingStage: "Series A",
+    description: "BI platform with Zoë, an AI data analyst. Combines conversational analytics with a semantic layer for consistent metrics. Strong eCommerce focus.",
+    targetSegment: "Mid-Market",
+    targetMarket: "midmarket",
+    fundingLevel: "medium",
+    icpOverlap: "High",
+    icpRationale: "Strong overlap — eCommerce/DTC focus matches Milo's #1 vertical. Bain Capital backed, targeting similar company sizes. Same buyer: ops and commercial leaders who want self-serve answers.",
+    knownCustomerTypes: "eCommerce, DTC, Retail, Tech Startups, Manufacturing",
+    knownCustomers: ["Various eCommerce and retail brands"],
+    threatLevel: "High",
+    threatRationale: "Closest direct competitor in eCommerce vertical. Well-funded, strong product, overlapping ICP.",
+    events: [
+      { date: "2024-09-26", type: "Funding", detail: "Raised $9M Series A led by M13, with Bain Capital Ventures, Correlation Ventures, Primary Venture Partners." }
+    ]
+  },
+  {
+    id: "tellius",
+    name: "Tellius",
+    website: "https://www.tellius.com/",
+    founded: 2016,
+    hq: "McLean, VA",
+    funding: "Undisclosed",
+    fundingStage: "Growth",
+    description: "Conversational analytics with automated ML and root cause analysis. Enterprise-leaning with deep governance features.",
+    targetSegment: "Enterprise",
+    targetMarket: "enterprise",
+    fundingLevel: "medium",
+    icpOverlap: "Low",
+    icpRationale: "Enterprise pricing and complexity. Targets data teams and technical buyers — the exact persona Milo avoids. Compliance and governance features suggest large org focus.",
+    knownCustomerTypes: "Financial Services, Healthcare, Enterprise Tech",
+    knownCustomers: [],
+    threatLevel: "Low",
+    threatRationale: "Enterprise-only product. Complex setup, long sales cycles. Rarely competes at Milo's deal size.",
+    events: []
+  },
+  {
+    id: "datagpt",
+    name: "DataGPT",
+    website: "https://datagpt.com/",
+    founded: 2021,
+    hq: "San Francisco, CA",
+    funding: "$11.9M",
+    fundingStage: "Series B",
+    description: "Conversational AI data analyst. Natural language queries, instant analyst-grade insights. Positioned as the 'world's first conversational AI data analyst'. Shut down in early 2026 — website dark, team dispersed.",
+    targetSegment: "Mid-Market",
+    targetMarket: "midmarket",
+    fundingLevel: "low",
+    icpOverlap: "Low",
+    icpRationale: "No longer operational. Was similar positioning to Milo — mid-market, non-technical buyers — but shut down. No longer a competitive factor.",
+    knownCustomerTypes: "SaaS, eCommerce, General Business",
+    knownCustomers: [],
+    threatLevel: "None",
+    threatRationale: "Shut down. Website dark, no team activity since late 2025. $11.9M raised but failed to scale. Validates how hard this market is for underfunded players.",
+    status: "shutdown",
+    events: [
+      { date: "2026-03-01", type: "Decline", detail: "DataGPT appears to have shut down. Website dark, team dispersed, no product activity since late 2025." },
+      { date: "2024-10-31", type: "Funding", detail: "Raised undisclosed Series B round." }
+    ]
+  },
+  {
+    id: "querio",
+    name: "Querio",
+    website: "https://querio.ai/",
+    founded: 2021,
+    hq: "Toronto, Canada",
+    funding: "Seed",
+    fundingStage: "Seed",
+    description: "Natural language BI for non-technical users. Connects to existing data warehouses. Simple, lightweight positioning.",
+    targetSegment: "Mid-Market",
+    targetMarket: "midmarket",
+    fundingLevel: "low",
+    icpOverlap: "Medium",
+    icpRationale: "Similar buyer (non-technical ops leaders) and company size. Limited UK/EU presence so far — mostly North America.",
+    knownCustomerTypes: "SaaS, General Business",
+    knownCustomers: [],
+    threatLevel: "Low",
+    threatRationale: "Small, early stage, limited geographic reach. Worth watching but not an immediate threat.",
+    events: []
+  },
+  {
+    id: "wobby",
+    name: "Wobby",
+    website: "https://www.wobby.ai/",
+    founded: 2022,
+    hq: "Antwerp, Belgium (acquired)",
+    funding: "$5.2M (acquired)",
+    fundingStage: "Acquired",
+    description: "AI data analyst agents for data warehouses. Natural language querying with agentic architecture. Belgian startup — acquired by HCLSoftware (HCLTech).",
+    targetSegment: "Mid-Market / Enterprise",
+    targetMarket: "midmarket",
+    fundingLevel: "low",
+    icpOverlap: "Medium",
+    icpRationale: "Pre-acquisition, competed directly in mid-market conversational BI. Now absorbed into HCL's enterprise platform — no longer an independent competitor.",
+    knownCustomerTypes: "General Business, European Mid-Market",
+    knownCustomers: [],
+    threatLevel: "None",
+    threatRationale: "Acquired by HCLSoftware December 2025. Absorbed into Actian enterprise platform. Effectively removed from the mid-market.",
+    status: "acquired",
+    events: [
+      { date: "2025-12-22", type: "Acquisition", detail: "Acquired by HCLSoftware (HCLTech) for $5.2M. To be integrated into Actian Data Intelligence Platform." }
+    ]
+  },
+  {
+    id: "lumiai",
+    name: "Lumi AI",
+    website: "https://www.lumi-ai.com/",
+    founded: 2023,
+    hq: "Middletown, DE",
+    funding: "$3.7M",
+    fundingStage: "Seed",
+    description: "Conversational analytics with a focus on agriculture and niche verticals. Small team, early stage.",
+    targetSegment: "SMB / Niche",
+    targetMarket: "midmarket",
+    fundingLevel: "low",
+    icpOverlap: "Low",
+    icpRationale: "Niche vertical focus (agri) doesn't overlap with Milo's target verticals. Small and early stage.",
+    knownCustomerTypes: "Agriculture, Niche Verticals",
+    knownCustomers: [],
+    threatLevel: "Low",
+    threatRationale: "Too niche and early stage to be a meaningful threat in Milo's market.",
+    events: []
+  }
+];
+
+const miloPosition = {
+  targetMarket: "midmarket",
+  fundingLevel: "seed",
+  name: "Milo",
+  description: "You are here"
+};
+
+const lastUpdated = "March 2026";
+
+// ============================================================
+// DASHBOARD ENGINE
+// ============================================================
+
+// Colour palette for competitor avatars
+const avatarColors = {
+  wisdomai: 'linear-gradient(135deg, #6366f1, #8b5cf6)',
+  julius: 'linear-gradient(135deg, #f59e0b, #f97316)',
+  zenlytic: 'linear-gradient(135deg, #ef4444, #f43f5e)',
+  tellius: 'linear-gradient(135deg, #06b6d4, #0284c7)',
+  datagpt: 'linear-gradient(135deg, #6b7280, #4b5563)',
+  querio: 'linear-gradient(135deg, #ec4899, #d946ef)',
+  wobby: 'linear-gradient(135deg, #6b7280, #9ca3af)',
+  lumiai: 'linear-gradient(135deg, #14b8a6, #0d9488)'
+};
+
+function getInitial(name) {
+  return name.charAt(0).toUpperCase();
+}
+
+// Parse funding amount for stats
+function parseFunding(str) {
+  const match = str.match(/\$([\d.]+)M/);
+  return match ? parseFloat(match[1]) : 0;
+}
+
+// Format date
+function formatDate(dateStr) {
+  const d = new Date(dateStr);
+  const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+  return `${months[d.getMonth()]} ${d.getFullYear()}`;
+}
+
+// Compute stats
+function getStats() {
+  const totalCompetitors = competitors.length;
+  const totalFunding = competitors.reduce((sum, c) => sum + parseFunding(c.funding), 0);
+  const acquisitions = competitors.filter(c => c.status === 'acquired').length;
+  const shutdowns = competitors.filter(c => c.status === 'shutdown').length;
+  const inactive = acquisitions + shutdowns;
+  const totalEvents = competitors.reduce((sum, c) => sum + c.events.length, 0);
+
+  // Latest event date for freshness indicator
+  let latestEventDate = null;
+  competitors.forEach(c => {
+    c.events.forEach(e => {
+      const d = new Date(e.date);
+      if (!latestEventDate || d > latestEventDate) latestEventDate = d;
+    });
+  });
+
+  return { totalCompetitors, totalFunding, inactive, totalEvents, latestEventDate };
+}
+
+// Get all events, sorted newest first
+function getAllEvents(filterType) {
+  let events = [];
+  competitors.forEach(c => {
+    c.events.forEach(e => {
+      events.push({ ...e, companyName: c.name, companyId: c.id });
+    });
+  });
+  events.sort((a, b) => new Date(b.date) - new Date(a.date));
+  if (filterType && filterType !== 'All') {
+    events = events.filter(e => e.type === filterType);
+  }
+  return events;
+}
+
+// Market map coordinates — spread midmarket cluster
+function getMapPosition(comp, index) {
+  const marketX = {
+    midmarket: 28,
+    enterprise: 75
+  };
+  const fundingY = {
+    seed: 78,
+    low: 68,
+    medium: 42,
+    high: 18
+  };
+
+  let x = marketX[comp.targetMarket] || 50;
+  let y = fundingY[comp.fundingLevel] || 50;
+
+  // Spread midmarket/low cluster
+  const offsets = {
+    julius: { x: -8, y: -4 },
+    datagpt: { x: 6, y: 3 },
+    querio: { x: -12, y: 6 },
+    wobby: { x: 12, y: -6 },
+    lumiai: { x: -4, y: 10 },
+    zenlytic: { x: 4, y: -2 },
+    tellius: { x: -6, y: 0 },
+    wisdomai: { x: 4, y: 2 }
+  };
+
+  if (offsets[comp.id]) {
+    x += offsets[comp.id].x;
+    y += offsets[comp.id].y;
+  }
+
+  return { x: Math.max(8, Math.min(92, x)), y: Math.max(8, Math.min(92, y)) };
+}
+
+function getMiloMapPosition() {
+  return { x: 22, y: 82 };
+}
+
+// ============================================================
+// RENDER
+// ============================================================
+
+function render() {
+  const stats = getStats();
+  const app = document.getElementById('app');
+
+  app.innerHTML = `
+    <div class="dashboard">
+      <!-- HEADER -->
+      <div class="header">
+        <div class="header-top">
+          <div>
+            <div class="header-title">Milo <span>Competitive Intelligence</span></div>
+            <div class="header-subtitle">AI Analytics & Conversational BI Market — Last Updated: ${lastUpdated}</div>
+          </div>
+          <div class="header-badge">
+            <i data-lucide="radar" style="width:14px;height:14px;"></i>
+            ${stats.totalCompetitors} competitors tracked
+          </div>
+        </div>
+        <div class="stats-bar">
+          <div class="stat-card">
+            <div class="stat-label">Competitors Tracked</div>
+            <div class="stat-value">${stats.totalCompetitors}</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-label">Total Funding in Market</div>
+            <div class="stat-value">$${stats.totalFunding.toFixed(0)}<span class="stat-unit">M+</span></div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-label">Inactive (Acquired / Shut Down)</div>
+            <div class="stat-value">${stats.inactive}</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-label">Total Intel Events</div>
+            <div class="stat-value">${stats.totalEvents}</div>
+          </div>
+        </div>
+        ${stats.latestEventDate ? `<div style="margin-top:12px;display:flex;align-items:center;gap:8px;">
+          <span style="width:7px;height:7px;border-radius:50%;background:${(new Date() - stats.latestEventDate) < 90*24*60*60*1000 ? 'var(--green)' : 'var(--amber)'};display:inline-block;"></span>
+          <span style="font-size:11px;color:var(--text-muted);">Latest intel: ${formatDate(stats.latestEventDate.toISOString().split('T')[0])}${(new Date() - stats.latestEventDate) > 90*24*60*60*1000 ? ' — data may be stale' : ''}</span>
+        </div>` : ''}
+      </div>
+
+      <!-- PRIMARY SECTIONS: Intel Feed + ICP Overlap -->
+      <div class="primary-sections">
+        <!-- INTEL FEED -->
+        <div class="intel-feed-container">
+          <div class="section-header">
+            <div class="section-title">
+              <i data-lucide="activity"></i>
+              Intel Feed
+            </div>
+            <div class="section-badge">Live</div>
+          </div>
+          <div class="feed-filters" id="feedFilters">
+            <button class="feed-filter active" data-filter="All">All</button>
+            <button class="feed-filter" data-filter="Funding">Funding</button>
+            <button class="feed-filter" data-filter="Acquisition">Acquisition</button>
+            <button class="feed-filter" data-filter="Launch">Launch</button>
+            <button class="feed-filter" data-filter="Decline">Decline</button>
+          </div>
+          <div class="feed-list" id="feedList"></div>
+        </div>
+
+        <!-- ICP OVERLAP -->
+        <div class="icp-container">
+          <div class="section-header">
+            <div class="section-title">
+              <i data-lucide="target"></i>
+              ICP Overlap
+            </div>
+          </div>
+          <div class="icp-subtitle">How closely each competitor's target customer matches Milo's ICP: 100-500 employee UK/EU companies, COO/Innovation/Ops leaders, mid-market, non-technical buyers.</div>
+          <div class="icp-list" id="icpList"></div>
+        </div>
+      </div>
+
+      <!-- MARKET MAP -->
+      <div class="market-map-section">
+        <div class="market-map-wrapper">
+          <div class="section-header">
+            <div class="section-title">
+              <i data-lucide="map"></i>
+              Market Map
+            </div>
+            <div class="section-badge">Supporting Context</div>
+          </div>
+          <div class="market-map" id="marketMap">
+            <div class="map-grid">
+              <div class="map-grid-line-h"></div>
+              <div class="map-grid-line-v"></div>
+            </div>
+            <div class="map-axis-label left">Mid-Market</div>
+            <div class="map-axis-label right">Enterprise</div>
+            <div class="map-axis-label top">Well Funded</div>
+            <div class="map-axis-label bottom">Bootstrapped / Seed</div>
+          </div>
+          <div class="map-tooltip" id="mapTooltip">
+            <div class="map-tooltip-name" id="tooltipName"></div>
+            <div class="map-tooltip-desc" id="tooltipDesc"></div>
+          </div>
+          <!-- MARKET NARRATIVE -->
+          <div class="market-narrative">
+            <div class="narrative-label">Your Market Read</div>
+            <div class="narrative-text" contenteditable="true" id="narrativeText">The conversational BI market is consolidating. Well-funded players (WisdomAI at $73M) are chasing enterprise, leaving mid-market underserved. Wobby's acquisition by HCL confirms the pattern — small players get absorbed or die. Milo's position is defensible: no one else is combining conversational BI with a security-first message for non-technical mid-market buyers in UK/EU. Zenlytic is the one to watch — closest ICP overlap in eCommerce.</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- COMPETITOR CARDS -->
+      <div class="cards-section">
+        <div class="section-header">
+          <div class="section-title">
+            <i data-lucide="layout-grid"></i>
+            Competitor Profiles
+          </div>
+          <div class="section-badge">${competitors.length} tracked</div>
+        </div>
+        <div class="cards-grid" id="cardsGrid"></div>
+      </div>
+
+      <!-- MODAL -->
+      <div class="modal-overlay" id="modalOverlay">
+        <div class="modal" id="modal"></div>
+      </div>
+    </div>
+  `;
+
+  renderFeed('All');
+  renderICP();
+  renderMarketMap();
+  renderCards();
+  initInteractions();
+  lucide.createIcons();
+}
+
+function renderFeed(filter) {
+  const feedList = document.getElementById('feedList');
+  const events = getAllEvents(filter);
+
+  if (events.length === 0) {
+    feedList.innerHTML = '<div class="feed-empty">No intel matching this filter.</div>';
+    return;
+  }
+
+  feedList.innerHTML = events.map(e => `
+    <div class="feed-item">
+      <div class="feed-date">${formatDate(e.date)}</div>
+      <span class="event-badge ${e.type.toLowerCase()}">${e.type}</span>
+      <div class="feed-content">
+        <div class="feed-company" style="color: ${getCompanyColor(e.companyId)}">${e.companyName}</div>
+        <div class="feed-detail">${e.detail}</div>
+      </div>
+    </div>
+  `).join('');
+}
+
+function getCompanyColor(id) {
+  const colors = {
+    wisdomai: '#8b5cf6',
+    julius: '#f59e0b',
+    zenlytic: '#ef4444',
+    tellius: '#06b6d4',
+    datagpt: '#22c55e',
+    querio: '#ec4899',
+    wobby: '#9ca3af',
+    lumiai: '#14b8a6'
+  };
+  return colors[id] || '#a78bfa';
+}
+
+function renderICP() {
+  const icpList = document.getElementById('icpList');
+  // Sort: High first, then Medium, then Low
+  const order = { High: 0, Medium: 1, Low: 2 };
+  const sorted = [...competitors].sort((a, b) => (order[a.icpOverlap] || 3) - (order[b.icpOverlap] || 3));
+
+  icpList.innerHTML = sorted.map(c => `
+    <div class="icp-item ${(c.status === 'acquired' || c.status === 'shutdown') ? 'acquired' : ''}">
+      <div class="icp-item-header">
+        <div class="icp-item-name">${c.name}${c.status === 'acquired' ? ' <span style="color:var(--text-muted);font-weight:400;font-size:11px;">(Acquired)</span>' : c.status === 'shutdown' ? ' <span style="color:var(--red);font-weight:400;font-size:11px;">(Shut Down)</span>' : ''}</div>
+        <span class="icp-score-badge ${c.icpOverlap.toLowerCase()}">${c.icpOverlap} Overlap</span>
+      </div>
+      <div class="icp-bar-track">
+        <div class="icp-bar-fill ${c.icpOverlap.toLowerCase()}"></div>
+      </div>
+      <div class="icp-rationale">${c.icpRationale}</div>
+    </div>
+  `).join('');
+}
+
+function renderMarketMap() {
+  const map = document.getElementById('marketMap');
+
+  // Render competitor dots
+  competitors.forEach((c, i) => {
+    const pos = getMapPosition(c, i);
+    const isInactive = c.status === 'acquired' || c.status === 'shutdown';
+    const dot = document.createElement('div');
+    dot.className = `map-dot ${isInactive ? 'inactive' : ''}`;
+    dot.style.left = `${pos.x}%`;
+    dot.style.top = `${pos.y}%`;
+    if (isInactive) dot.style.opacity = '0.35';
+    dot.setAttribute('data-id', c.id);
+    dot.innerHTML = `
+      <div class="map-dot-circle" style="background: ${avatarColors[c.id]};">
+        ${getInitial(c.name)}
+      </div>
+      <div class="map-dot-label">${c.name}</div>
+    `;
+    map.appendChild(dot);
+  });
+
+  // Render Milo dot
+  const miloPos = getMiloMapPosition();
+  const miloDot = document.createElement('div');
+  miloDot.className = 'map-dot milo';
+  miloDot.style.left = `${miloPos.x}%`;
+  miloDot.style.top = `${miloPos.y}%`;
+  miloDot.innerHTML = `
+    <div class="map-dot-circle">M</div>
+    <div class="map-dot-label">Milo (You)</div>
+  `;
+  map.appendChild(miloDot);
+}
+
+function renderCards() {
+  const grid = document.getElementById('cardsGrid');
+
+  // Sort: High threat first
+  const threatOrder = { High: 0, Medium: 1, Low: 2, None: 3 };
+  const sorted = [...competitors].sort((a, b) => (threatOrder[a.threatLevel] || 3) - (threatOrder[b.threatLevel] || 3));
+
+  grid.innerHTML = sorted.map(c => `
+    <div class="competitor-card ${c.status === 'acquired' ? 'acquired' : c.status === 'shutdown' ? 'shutdown' : ''}" data-id="${c.id}">
+      <div class="card-header">
+        <div class="card-avatar" style="background: ${avatarColors[c.id]};">
+          ${getInitial(c.name)}
+        </div>
+        <div>
+          <div class="card-name">${c.website ? `<a href="${c.website}" target="_blank" rel="noopener" onclick="event.stopPropagation()">${c.name}</a>` : c.name}</div>
+          <div class="card-meta">Founded ${c.founded} · ${c.hq} · ${c.funding}</div>
+        </div>
+      </div>
+      <div class="card-description">${c.description}</div>
+      <div class="card-tags">
+        <span class="card-tag segment">${c.targetSegment}</span>
+        <span class="card-tag threat-${c.threatLevel.toLowerCase()}">Threat: ${c.threatLevel}</span>
+        <span class="card-tag overlap-${c.icpOverlap.toLowerCase()}">ICP: ${c.icpOverlap}</span>
+      </div>
+      <div class="card-customers">Verticals: <span>${c.knownCustomerTypes}</span></div>
+      <div class="card-expand-hint">
+        <i data-lucide="expand" style="width:12px;height:12px;"></i>
+        Click for full profile
+      </div>
+    </div>
+  `).join('');
+}
+
+function openModal(id) {
+  const c = competitors.find(comp => comp.id === id);
+  if (!c) return;
+
+  const modal = document.getElementById('modal');
+  const overlay = document.getElementById('modalOverlay');
+
+  modal.innerHTML = `
+    <button class="modal-close" onclick="closeModal()">
+      <i data-lucide="x" style="width:16px;height:16px;"></i>
+    </button>
+    <div class="modal-header">
+      <div class="modal-avatar" style="background: ${avatarColors[c.id]};">
+        ${getInitial(c.name)}
+      </div>
+      <div>
+        <div class="modal-name">${c.name}</div>
+        <div class="modal-meta">Founded ${c.founded} · ${c.hq} · ${c.fundingStage} · ${c.funding}</div>
+      </div>
+    </div>
+
+    <div class="modal-section">
+      <div class="modal-section-title">Overview</div>
+      <p>${c.description}</p>
+    </div>
+
+    <div class="modal-section">
+      <div class="modal-section-title">Positioning</div>
+      <div class="modal-tags">
+        <span class="card-tag segment">${c.targetSegment}</span>
+        <span class="card-tag threat-${c.threatLevel.toLowerCase()}">Threat: ${c.threatLevel}</span>
+        <span class="card-tag overlap-${c.icpOverlap.toLowerCase()}">ICP Overlap: ${c.icpOverlap}</span>
+      </div>
+    </div>
+
+    <div class="modal-section">
+      <div class="modal-section-title">Threat Assessment</div>
+      <p>${c.threatRationale}</p>
+    </div>
+
+    <div class="modal-section">
+      <div class="modal-section-title">ICP Overlap Analysis</div>
+      <p>${c.icpRationale}</p>
+    </div>
+
+    <div class="modal-section">
+      <div class="modal-section-title">Customer Verticals</div>
+      <p>${c.knownCustomerTypes}</p>
+    </div>
+
+    ${c.knownCustomers.length > 0 ? `
+    <div class="modal-section">
+      <div class="modal-section-title">Known Customers</div>
+      <div class="modal-customers-list">
+        ${c.knownCustomers.map(cust => `<span class="modal-customer">${cust}</span>`).join('')}
+      </div>
+    </div>
+    ` : ''}
+
+    <div class="modal-section">
+      <div class="modal-section-title">Recent Intel</div>
+      ${c.events.length > 0 ? `
+        <div class="modal-events">
+          ${c.events.map(e => `
+            <div class="modal-event">
+              <span class="modal-event-date">${formatDate(e.date)}</span>
+              <span class="event-badge ${e.type.toLowerCase()}">${e.type}</span>
+              <span class="modal-event-detail">${e.detail}</span>
+            </div>
+          `).join('')}
+        </div>
+      ` : '<div class="modal-no-data">No recent intel tracked.</div>'}
+    </div>
+  `;
+
+  overlay.classList.add('active');
+  lucide.createIcons();
+}
+
+function closeModal() {
+  document.getElementById('modalOverlay').classList.remove('active');
+}
+
+function initInteractions() {
+  // Feed filters
+  document.getElementById('feedFilters').addEventListener('click', (e) => {
+    if (e.target.classList.contains('feed-filter')) {
+      document.querySelectorAll('.feed-filter').forEach(f => f.classList.remove('active'));
+      e.target.classList.add('active');
+      renderFeed(e.target.dataset.filter);
+    }
+  });
+
+  // Card clicks → modal
+  document.getElementById('cardsGrid').addEventListener('click', (e) => {
+    const card = e.target.closest('.competitor-card');
+    if (card) openModal(card.dataset.id);
+  });
+
+  // Modal overlay close
+  document.getElementById('modalOverlay').addEventListener('click', (e) => {
+    if (e.target === e.currentTarget) closeModal();
+  });
+
+  // Escape to close modal
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') closeModal();
+  });
+
+  // Market map tooltips
+  const tooltip = document.getElementById('mapTooltip');
+  const map = document.getElementById('marketMap');
+
+  map.addEventListener('mouseover', (e) => {
+    const dot = e.target.closest('.map-dot');
+    if (!dot) return;
+
+    const id = dot.dataset.id;
+    let name, desc;
+
+    if (dot.classList.contains('milo')) {
+      name = 'Milo';
+      desc = 'You are here. Pre-seed, mid-market focus, UK/EU.';
+    } else {
+      const c = competitors.find(comp => comp.id === id);
+      if (!c) return;
+      name = c.name;
+      desc = `${c.funding} · ${c.targetSegment} · Threat: ${c.threatLevel}`;
+    }
+
+    document.getElementById('tooltipName').textContent = name;
+    document.getElementById('tooltipDesc').textContent = desc;
+
+    const mapRect = map.getBoundingClientRect();
+    const dotRect = dot.getBoundingClientRect();
+    const tooltipEl = tooltip;
+
+    let left = dotRect.left - mapRect.left + dotRect.width / 2;
+    let top = dotRect.top - mapRect.top - 10;
+
+    // Position above dot, centered
+    tooltipEl.style.left = `${left}px`;
+    tooltipEl.style.top = `${top}px`;
+    tooltipEl.style.transform = 'translate(-50%, -100%)';
+
+    tooltipEl.classList.add('visible');
+  });
+
+  map.addEventListener('mouseout', (e) => {
+    const dot = e.target.closest('.map-dot');
+    if (dot) {
+      tooltip.classList.remove('visible');
+    }
+  });
+
+  // Map dot click → modal
+  map.addEventListener('click', (e) => {
+    const dot = e.target.closest('.map-dot');
+    if (dot && !dot.classList.contains('milo') && dot.dataset.id) {
+      openModal(dot.dataset.id);
+    }
+  });
+}
+
+// Boot
+document.addEventListener('DOMContentLoaded', render);
+</script>
+
+<div id="app"></div>
+
+</body>
+</html>
