@@ -1,0 +1,8 @@
+hubspot-call-sorter/data/
+hubspot-call-sorter/.env
+hubspot-call-sorter/index.html
+_site/
+.env
+__pycache__/
+*.pyc
+.DS_Store
